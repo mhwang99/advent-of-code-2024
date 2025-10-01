@@ -18,56 +18,58 @@
     MXMXAXMASX" "\\w"))
 (def in (get-line-word "\\w"))
 
-(def dirs (vec (for [x (range -1 2)
-                     y (range -1 2)
-                     :when (not (= x y 0))] [x y])))
+(def dirs (for [x [-1 0 1]
+                y [-1 0 1]
+                :when (not (= 0 x y))]
+            [x y]))
 
-(defn get-word
-  ([board pt dir n] (get-word board pt dir n ""))
-  ([board pt dir n ret]
-   (cond
-     (< n 1) ret
-     (nil? (get-in board pt)) nil
-     :else
-     (get-word board
-               (mapv + pt dir)
-               dir
-               (dec n)
-               (str ret (get-in board pt))))))
+(defn get-direction-word
+  [board pt n dir]
+  (loop [n n
+         pt pt
+         ret ""]
+    (if (< n 1)
+      ret
+      (let [v (get-in board pt)]
+        (if (nil? v)
+          nil
+          (recur (dec n)
+                 (map + pt dir)
+                 (str ret v)))))))
 
+(defn get-directions-word
+  [board pt n directions pred]
+  (->> directions
+       (keep #(let [r (get-direction-word board pt n %)]
+                (when (pred r) r)))))
 
 (defn q1 [board]
-  (->> (for [x (range (count board))
-             y (range (count (first board)))]
-         [x y])
-       (mapcat (fn [pt]
-                 (keep #(get-word board pt % 4 "") dirs)))
-       (filter #(= "XMAS" %))
-       count))
+  (let [pred #(= "XMAS" %)]
+    (->> (get-all-points board)
+         (mapcat #(get-directions-word board % 4 dirs pred))
+         count)))
+
+#_(q1 in)
 
 (def xpts [[[-1 -1] [0 0] [1 1]]
-            [[1 1] [0 0] [-1 -1]]
-            [[1 -1] [0 0] [-1 1]]
-            [[-1 1] [0 0] [1 -1]]])
-
-(defn get-pt-word
-  [board pt map-pt]
-  (let [cs (mapv #(get-in board (mapv + pt %)) map-pt)]
-    (if (some nil? cs)
-      nil
-      (apply str cs))))
+           [[1 1] [0 0] [-1 -1]]
+           [[1 -1] [0 0] [-1 1]]
+           [[-1 1] [0 0] [1 -1]]])
 
 (defn check-x-word
   [board pt]
-  (->> (keep #(get-pt-word board pt %) xpts)
+  (->> (keep #(get-point-word board pt %) xpts)
        (filter #(= "MAS" %))
        count (= 2)))
 
 
 (defn q2 [board]
-  (let [pts (for [x (range (count board))
-                  y (range (count (first board)))]
-              [x y])]
-    (count (filter #(check-x-word board %) pts))))
+  (let [rows (count board)
+        cols (count (first board))]
+    (->> (mapcat #(mapv vector (repeat %1) %2)
+                 (range rows)
+                 (repeat (range cols)))
+         (filter #(check-x-word board %))
+         count)))
 
 #_(q2 in)

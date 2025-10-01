@@ -15,6 +15,12 @@
   ([s delim]
    (s/split s (re-pattern delim))))
 
+(defn get-lines
+  ([]
+   (get-lines (get-res)))
+  ([s]
+   (mapv s/trim (s/split s #"\n"))))
+
 (defn get-line-split
   ([delim]
    (get-line-split (get-res) delim))
@@ -60,4 +66,29 @@
     (if (coll? form)
       (f (reduce pf acc form) form)
       (f acc form))))
+
+(defn get-all-points
+  [board]
+  (let [rows (count board)
+        cols (count (first board))]
+    (mapcat #(mapv vector (repeat %1) %2)
+            (range rows)
+            (repeat (range cols)))))
+
+(defn get-point-word
+  [board pt offset-points]
+  (let [cs (mapv #(get-in board (mapv + pt %)) offset-points)]
+    (if (some nil? cs)
+      nil
+      (apply str cs))))
+
+(defn get-dir-words
+  [board pt n directions pred]
+  (->> directions
+       (map (fn [dir] (map #(map * dir (repeat %)) (range n))))
+       (map #(get-point-word board pt %))
+       (filter pred)))
+
+(defn get-mid [l]
+  (nth l (int (/ (count l) 2))))
 
