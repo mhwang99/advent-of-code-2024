@@ -21,6 +21,13 @@
   ([s]
    (mapv s/trim (s/split s #"\n"))))
 
+(defn get-line-chars
+  ([]
+   (get-line-chars (get-res)))
+  ([s]
+   (mapv (comp vec seq) (get-lines s))))
+
+
 (defn get-line-split
   ([delim]
    (get-line-split (get-res) delim))
