@@ -46,7 +46,7 @@
 
 (defn atoi
   [s]
-  (Integer. (str s)))
+  (Long. (str s)))
 
 (defn get-num
   ([]
