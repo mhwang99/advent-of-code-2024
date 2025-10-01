@@ -99,3 +99,12 @@
 (defn get-mid [l]
   (nth l (int (/ (count l) 2))))
 
+(defn get-permutation
+  [l cnt]
+  (->> l
+       (reduce (fn [ll x]
+            (into ll (map #(conj % x)
+                          (filter #(< (count %) cnt) ll)
+                          )))
+          [[]])
+       (filter #(= (count %) cnt))))
