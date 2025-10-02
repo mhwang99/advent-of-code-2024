@@ -32,9 +32,7 @@
 (defn get-next-pts
   [pts pred]
   (->> pts
-       (mapcat (fn [pt]
-                 (map #(mapv + pt %)
-                      [[1 0] [-1 0] [0 1] [0 -1]])))
+       (mapcat next-points)
        (filter pred)
        set))
 
@@ -65,7 +63,7 @@
        (mapcat (fn [route]
                  (mapcat #(let [pt (mapv + (last route) %)]
                             [(conj route pt)])
-                         [[1 0] [-1 0] [0 1] [0 -1]])))
+                         (get-offsets :all))))
        (filter (fn [route]
                  (pred (last route))))
        set))

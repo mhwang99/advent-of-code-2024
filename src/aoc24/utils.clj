@@ -112,3 +112,23 @@
                           )))
           [[]])
        (filter #(= (count %) cnt))))
+
+(defn get-offsets [dir]
+  (get {:hori [[0 1] [0 -1]]
+        :vert [[1 0] [-1 0]]
+        :all [[1 0] [-1 0] [0 -1] [0 1]]}
+       dir))
+
+(defn get-direction [loc]
+  (get {:up :hori
+        :down :hori
+        :left :vert
+        :right :vert}
+       loc))
+
+(defn next-points
+  ([pt] (next-points pt :all))
+  ([pt dir]
+   (->> (get-offsets dir)
+        (map #(mapv + pt %)))))
+
