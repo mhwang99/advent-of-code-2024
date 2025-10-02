@@ -1,6 +1,8 @@
 (ns aoc24.utils
   (:require [clojure.string :as s]))
 
+(defn atoi [s] (Long. (str s)))
+
 (defn get-res []
   (->> (s/split (str *ns*) #"\.")
        second
@@ -33,7 +35,6 @@
   ([s]
    (mapv #(mapv atoi %) (get-lines s))))
 
-
 (defn get-line-split
   ([delim]
    (get-line-split (get-res) delim))
@@ -50,9 +51,6 @@
         (mapv (fn [l]
                 (vec (re-seq (re-pattern word) l)))))))
 
-(defn atoi
-  [s]
-  (Long. (str s)))
 
 (defn get-num
   ([]
