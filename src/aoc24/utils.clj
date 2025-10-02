@@ -27,6 +27,12 @@
   ([s]
    (mapv (comp vec seq) (get-lines s))))
 
+(defn get-line-ichars
+  ([]
+   (get-line-ichars (get-res)))
+  ([s]
+   (mapv #(mapv atoi %) (get-lines s))))
+
 
 (defn get-line-split
   ([delim]
