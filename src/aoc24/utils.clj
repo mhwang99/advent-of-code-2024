@@ -78,6 +78,21 @@
       (f (reduce pf acc form) form)
       (f acc form))))
 
+(defn find-x
+  [board x]
+  (let [rows (count board)
+        cols (count (first board))]
+    (loop [row 0]
+      (if (= row rows)
+        nil
+        (if-let [pt (loop [col 0]
+                      (cond
+                        (= col cols) nil
+                        (= x (get-in board [row col])) [row col]
+                        :else (recur (inc col))))]
+          pt
+          (recur (inc row)))))))
+
 (defn get-all-points
   [board]
   (let [rows (count board)
@@ -131,4 +146,9 @@
   ([pt dir]
    (->> (get-offsets dir)
         (map #(mapv + pt %)))))
+
+(defn print-board [board]
+  (doseq [l board]
+    (println (apply str l)))
+  board)
 

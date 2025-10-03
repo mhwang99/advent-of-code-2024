@@ -18,20 +18,6 @@
 ......#..."))
 (def in (get-line-chars))
 
-
-(defn get-guard [board]
-  (let [rows (count board)
-        cols (count (first board))]
-    (reduce
-      (fn [_ row]
-        (when-let [col (reduce
-                         (fn [_ col]
-                           (when (= \^ (get-in board [row col]))
-                             (reduced col)))
-                         nil (range cols))]
-          (reduced [row col])))
-      nil (range rows))))
-
 (defn get-next
   [pt d]
   (->> d
@@ -41,11 +27,10 @@
 (defn turn [d]
   (get {:u :r, :r :d, :d :l, :l :u} d))
 
-
 (defn q1
   [board]
   (loop [dir :u
-         pt (get-guard board)
+         pt (find-x board \^)
          path #{pt}]
     (let [npt (get-next pt dir)
           v (get-in board npt)]
