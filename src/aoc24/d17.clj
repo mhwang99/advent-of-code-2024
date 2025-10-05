@@ -77,7 +77,7 @@
 
 #_(q1 in)
 
-(defn get-possible-a
+(defn find-matching-a
   [{:keys [prog] :as com}]
   (reduce (fn [acc i]
             (let [dest (take-last i prog)]
@@ -90,7 +90,7 @@
 
 (defn q2
   [com]
-  (apply min (get-possible-a com)))
+  (apply min (find-matching-a com)))
 
 
 #_(q2 in)
