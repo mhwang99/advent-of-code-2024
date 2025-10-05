@@ -10,6 +10,8 @@
     [(mapv s/trim (s/split ptns #","))
      (mapv s/trim dgs)]))
 
+(def (parse-input (get-res))
+
 (def valid-count
   (memoize
     (fn [ptns dg]
