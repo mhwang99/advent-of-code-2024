@@ -23,7 +23,7 @@
 (def dboard-keymap (key-map dirpad-board))
 (def nboard-keymap (key-map numpad-board))
 
-(def find-next-codes
+(def find-moves
   (memoize
     (fn [code-type sv ev]
       (let [board (if (= :dir code-type) dirpad-board numpad-board)
@@ -48,41 +48,33 @@
                                                     (nil? (get-in board pt))))))]
                       (recur nptps (into seen (map first nptps)))))))))))
 
-(defn get-next-codes
-  [code-type code]
-  (->> (str "A" code)
-       (partition 2 1)
-       (mapv (fn [[sv ev]] (find-next-codes code-type sv ev)))))
-
 (def get-nth-code-len
   (memoize
     (fn [code-type code n]
       (if (< n 0)
         (count code)
-        (->> (get-next-codes code-type code)
-             (map (fn [codes]
-                    (->> (map #(get-nth-code-len :dir % (dec n)) codes)
+        (->> (str "A" code)
+             (partition 2 1)
+             (map (fn [[sv ev]]
+                    (->> (find-moves code-type sv ev)
+                         (map #(get-nth-code-len :dir % (dec n)))
                          (reduce min))))
              (reduce +))))))
 
 (defn q1
   [codes]
-  (reduce
-    (fn [ret code]
-      (let [cnt (get-nth-code-len :num code 2)
-            coden (->> code drop-last (apply str) atoi)]
-        (+ ret (* cnt coden))))
-    0 codes))
+  (->> codes
+       (map #(* (get-nth-code-len :num % 2)
+                (->> % drop-last (apply str) atoi)))
+       (reduce +)))
 
 #_(q1 in)
 
 (defn q2
   [codes]
-  (reduce
-    (fn [ret code]
-      (let [cnt (get-nth-code-len :num code 25)
-            coden (->> code drop-last (apply str) atoi)]
-        (+ ret (* cnt coden))))
-    0 codes))
+  (->> codes
+       (map #(* (get-nth-code-len :num % 25)
+                (->> % drop-last (apply str) atoi)))
+       (reduce +)))
 
 #_(q2 in)
