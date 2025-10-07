@@ -22,8 +22,8 @@
 #_(q1 in)
 
 (defn get-changes-map
-  [n s]
-  (->> (iterate gen-secret s)
+  [n x]
+  (->> (iterate gen-secret x)
        (take n)
        (map #(mod % 10))
        (partition 5 1)
